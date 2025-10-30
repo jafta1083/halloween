@@ -1,0 +1,146 @@
+{
+  "spooky": [
+    {
+      "question": "What ghost is said to appear in mirrors when you say their name three times?",
+      "options": ["Bloody Mary", "Casper", "The White Lady", "Slender Man"],
+      "correct_answer": "Bloody Mary",
+      "difficulty": "easy"
+    },
+    {
+      "question": "According to legend, what happens if you walk backwards up a staircase at midnight holding a mirror?",
+      "options": ["You see your future spouse", "You see a ghost", "You trip and fall", "Nothing happens"],
+      "correct_answer": "You see your future spouse",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What famous hotel inspired Stephen King to write 'The Shining'?",
+      "options": ["The Stanley Hotel", "Overlook Hotel", "Bates Motel", "Hotel California"],
+      "correct_answer": "The Stanley Hotel",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In Japanese folklore, what type of spirit is known for having no face?",
+      "options": ["Noppera-bō", "Yurei", "Kappa", "Oni"],
+      "correct_answer": "Noppera-bō",
+      "difficulty": "hard"
+    },
+    {
+      "question": "What is the name of the legendary Mexican ghost who weeps for her children?",
+      "options": ["La Llorona", "El Coco", "La Catrina", "El Chupacabra"],
+      "correct_answer": "La Llorona",
+      "difficulty": "medium"
+    }
+  ],
+  "candy": [
+    {
+      "question": "What was the first wrapped penny candy in America?",
+      "options": ["Tootsie Roll", "Necco Wafers", "Hershey's Kiss", "Caramel"],
+      "correct_answer": "Tootsie Roll",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the most popular Halloween candy in America?",
+      "options": ["Reese's Cups", "M&Ms", "Snickers", "Skittles"],
+      "correct_answer": "Reese's Cups",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What controversial Halloween candy was originally called 'Chicken Feed'?",
+      "options": ["Candy Corn", "Mellowcreme Pumpkins", "Peeps", "Candy Buttons"],
+      "correct_answer": "Candy Corn",
+      "difficulty": "hard"
+    }
+  ],
+  "paranormal": [
+    {
+      "question": "What paranormal investigation tool is used to detect electromagnetic fields?",
+      "options": ["EMF Meter", "Spirit Box", "Ouija Board", "Pendulum"],
+      "correct_answer": "EMF Meter",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the name for a ghost that makes physical noises like knocking or footsteps?",
+      "options": ["Poltergeist", "Wraith", "Specter", "Banshee"],
+      "correct_answer": "Poltergeist",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In parapsychology, what is the term for objects that mysteriously appear out of nowhere?",
+      "options": ["Apports", "Manifestations", "Materialization", "Teleports"],
+      "correct_answer": "Apports",
+      "difficulty": "hard"
+    }
+  ],
+  "costumes": [
+    {
+      "question": "What was the most popular Halloween costume in 2024?",
+      "options": ["Wednesday Addams", "Spider-Man", "Barbie", "Mario"],
+      "correct_answer": "Barbie",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In medieval times, what did people wear to avoid being recognized by ghosts?",
+      "options": ["Masks", "Animal skins", "Bright colors", "Face paint"],
+      "correct_answer": "Masks",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What color was originally associated with Halloween before orange and black?",
+      "options": ["Purple", "Red", "Green", "White"],
+      "correct_answer": "Purple",
+      "difficulty": "hard"
+    },
+    {
+      "question": "What traditional Halloween costume element was inspired by plague doctors?",
+      "options": ["Long-nosed masks", "Black cloaks", "Pointed hats", "White gloves"],
+      "correct_answer": "Long-nosed masks",
+      "difficulty": "hard"
+    },
+    {
+      "question": "Which ancient Celtic festival required participants to wear animal heads and skins?",
+      "options": ["Samhain", "Beltane", "Lughnasadh", "Imbolc"],
+      "correct_answer": "Samhain",
+      "difficulty": "medium"
+    }
+  ],
+  "movies": [
+    {
+      "question": "In which year was the original 'Halloween' movie released?",
+      "options": ["1978", "1980", "1976", "1982"],
+      "correct_answer": "1978",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What was the name of the first talking ghost in 'Ghostbusters'?",
+      "options": ["Slimer", "Stay Puft", "Library Ghost", "Zuul"],
+      "correct_answer": "Library Ghost",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which famous actor played Jack Torrance in 'The Shining'?",
+      "options": ["Jack Nicholson", "Robert De Niro", "Al Pacino", "Anthony Hopkins"],
+      "correct_answer": "Jack Nicholson",
+      "difficulty": "easy"
+    }
+  ],
+  "history": [
+    {
+      "question": "What ancient festival is Halloween based on?",
+      "options": ["Samhain", "Beltane", "Yule", "Ostara"],
+      "correct_answer": "Samhain",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In which country did the tradition of carving jack-o'-lanterns originate?",
+      "options": ["Ireland", "United States", "England", "Scotland"],
+      "correct_answer": "Ireland",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What vegetable was originally used to make jack-o'-lanterns before pumpkins?",
+      "options": ["Turnips", "Beets", "Potatoes", "Carrots"],
+      "correct_answer": "Turnips",
+      "difficulty": "easy"
+    }
+  ]
+}

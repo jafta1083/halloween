@@ -1,0 +1,12 @@
+typing-extensions==4.8.0
+flask==2.3.3
+streamlit==1.28.0
+tqdm==4.66.1  # For progress bars
+python-vlc==3.0.18121  # For cross-platform audio playback
+
+# Notes:
+# - termios and msvcrt are standard library modules for Unix/Windows and should not be
+#   listed as pip-installable packages. They were removed to avoid pip errors.
+# - playsound can have build issues on some Python versions; it is optional. If you
+#   want sound effects, consider adding a compatible package or using web audio in
+#   the Streamlit app.
