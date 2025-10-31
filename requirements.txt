@@ -4,6 +4,9 @@ streamlit==1.28.0
 tqdm==4.66.1  # For progress bars
 python-vlc==3.0.18121  # For cross-platform audio playback
 
+# Production WSGI server for deployment
+gunicorn==20.1.0
+
 # Notes:
 # - termios and msvcrt are standard library modules for Unix/Windows and should not be
 #   listed as pip-installable packages. They were removed to avoid pip errors.

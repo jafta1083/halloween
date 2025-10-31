@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: halloween-quiz
+    env: docker
+    dockerfilePath: Dockerfile
+    branch: main
+    plan: starter
+    autoDeploy: true
+    pullRequestPreviews: false

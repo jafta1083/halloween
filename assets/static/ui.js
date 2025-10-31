@@ -119,4 +119,52 @@
 
   // When the page is interacted with (click), allow audio autoplay attempts again
   document.addEventListener('click', function once(){ applyMute(); document.removeEventListener('click', once); }, {once:true});
+
+  // Keyboard accessibility: map number keys to options and Enter to activate
+  (function(){
+    try{
+      const optionButtons = Array.from(document.querySelectorAll('button[name="answer"]'));
+      if(!optionButtons || optionButtons.length===0) return;
+
+      let selected = null;
+      function clearSelected(){ optionButtons.forEach(b=>b.classList.remove('selected')); selected = null; }
+      function selectIndex(i){ clearSelected(); const b = optionButtons[i]; if(b){ b.classList.add('selected'); b.focus(); selected = i; } }
+
+      // handle digit keys 1..9 (map to option 0..n-1)
+      document.addEventListener('keydown', function(e){
+        // ignore if typing in input or textarea
+        const tag = (document.activeElement && document.activeElement.tagName) || '';
+        if(tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement && document.activeElement.isContentEditable) return;
+
+        // digits row and numpad
+        if(e.key >= '1' && e.key <= '9'){
+          const idx = parseInt(e.key,10) - 1;
+          if(idx < optionButtons.length){
+            e.preventDefault(); selectIndex(idx);
+          }
+          return;
+        }
+
+        // Enter activates currently selected option (or default if one is focused)
+        if(e.key === 'Enter'){
+          if(selected !== null && optionButtons[selected]){
+            e.preventDefault(); optionButtons[selected].click();
+            return;
+          }
+          // if focused element is one of the options, let it proceed
+        }
+
+        // Space also activates the selected option
+        if(e.key === ' '){
+          if(selected !== null && optionButtons[selected]){
+            e.preventDefault(); optionButtons[selected].click();
+            return;
+          }
+        }
+      });
+
+      // allow clicking to set selection
+      optionButtons.forEach((b, i)=> b.addEventListener('click', ()=>{ clearSelected(); b.classList.add('selected'); selected = i; }));
+    }catch(e){console.error('keyboard accessibility init failed', e)}
+  })();
 })();

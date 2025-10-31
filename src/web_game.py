@@ -81,8 +81,8 @@ TEMPLATE = """
             <div class="question">{{ question }}</div>
             <form class="options" method="POST" action="/answer">
                 {% for option in options %}
-                    <button class="option" type="submit" name="answer" value="{{ loop.index0 }}">
-                        {{ option }}
+                    <button class="option card" type="submit" name="answer" value="{{ loop.index0 }}" data-option-index="{{ loop.index0 }}" aria-label="Answer {{ loop.index }}: {{ option }}">
+                        <strong style="margin-right:8px">{{ loop.index }}.</strong> {{ option }}
                     </button>
                 {% endfor %}
             </form>
