@@ -36,8 +36,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/halloween-quiz:latest
-            ghcr.io/${{ github.repository_owner }}/halloween-quiz:${{ github.sha }}
+            ghcr.io/jafta1083/halloween-quiz:latest
+            ghcr.io/jafta1083/halloween-quiz:${{ github.sha }}
 
       - name: Trigger Render deploy (optional)
         if: ${{ secrets.RENDER_API_KEY && secrets.RENDER_SERVICE_ID }}
