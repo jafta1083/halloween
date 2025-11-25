@@ -45,21 +45,23 @@
       c.width = window.innerWidth; c.height = window.innerHeight;
       const ctx = c.getContext('2d');
       const pieces = [];
-      const colors = ['#ff6b00','#ffdd66','#8b5cff','#6bffb3','#ff6bb5'];
-      for(let i=0;i<80;i++){
-        pieces.push({x:Math.random()*c.width,y:Math.random()*c.height*0.2, vx:(Math.random()-0.5)*6, vy:2+Math.random()*6, r:2+Math.random()*6, c: colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*360});
+      const colors = ['#ff8a00','#ffd86b','#8b5cff','#6bffb3','#ff6bb5'];
+      for(let i=0;i<120;i++){
+        pieces.push({x:Math.random()*c.width,y:Math.random()*c.height*0.15, vx:(Math.random()-0.5)*8, vy:2+Math.random()*8, r:2+Math.random()*7, c: colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*360, spin: (Math.random()-0.5)*0.2});
       }
       let t=0; window.__confettiActive = true;
       function step(){
         ctx.clearRect(0,0,c.width,c.height);
         t+=1;
         for(let p of pieces){
-          p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.rot+=p.vx*0.5;
-          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.rot+=p.spin;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
           ctx.fillStyle=p.c; ctx.fillRect(-p.r, -p.r*0.6, p.r*2, p.r*1.2);
           ctx.restore();
+          // recycle
+          if(p.y > c.height + 20){ p.y = -10; p.x = Math.random()*c.width; }
         }
-        if(t<360){ requestAnimationFrame(step); } else { document.body.removeChild(c); window.__confettiActive=false; }
+        if(t<420){ requestAnimationFrame(step); } else { try{ document.body.removeChild(c); }catch(e){} window.__confettiActive=false; }
       }
       requestAnimationFrame(step);
     }catch(e){console.error(e)}
@@ -117,6 +119,20 @@
     }catch(e){ console.error('timer error', e); }
   })();
 
+  // entrance animation for options: staggered fade/slide
+  (function(){
+    try{
+      const optionEls = Array.from(document.querySelectorAll('.option'));
+      if(optionEls.length){
+        optionEls.forEach((el,i)=>{
+          el.style.opacity = 0; el.style.transform = 'translateY(10px)';
+          el.style.transition = 'opacity .45s ease, transform .45s cubic-bezier(.2,.9,.2,1)';
+          setTimeout(()=>{ el.style.opacity = 1; el.style.transform = 'translateY(0)'; }, 120 + i*80);
+        });
+      }
+    }catch(e){/* ignore */}
+  })();
+
   // When the page is interacted with (click), allow audio autoplay attempts again
   document.addEventListener('click', function once(){ applyMute(); document.removeEventListener('click', once); }, {once:true});
 
@@ -163,8 +179,22 @@
         }
       });
 
-      // allow clicking to set selection
-      optionButtons.forEach((b, i)=> b.addEventListener('click', ()=>{ clearSelected(); b.classList.add('selected'); selected = i; }));
+      // allow clicking to set selection and add ripple
+      optionButtons.forEach((b, i)=>{
+        b.addEventListener('click', ()=>{ clearSelected(); b.classList.add('selected'); selected = i; });
+        b.addEventListener('pointerdown', (ev)=>{
+          // ripple effect
+          const r = document.createElement('span');
+          r.className = 'ripple';
+          const rect = b.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height)*1.6;
+          r.style.width = r.style.height = size + 'px';
+          r.style.left = (ev.clientX - rect.left - size/2) + 'px';
+          r.style.top = (ev.clientY - rect.top - size/2) + 'px';
+          b.appendChild(r);
+          setTimeout(()=> r.remove(), 600);
+        });
+      });
     }catch(e){console.error('keyboard accessibility init failed', e)}
   })();
 })();

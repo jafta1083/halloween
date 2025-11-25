@@ -9,85 +9,109 @@ import platform
 import threading
 import shutil
 
-app = Flask(__name__)
+# Configure Flask to serve static files from the project's assets/static directory
+STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../assets/static'))
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='/static')
 app.secret_key = 'halloween2025'  # Required for session management
-
-# Serve static frontend assets (CSS/JS) from assets/static
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    static_dir = os.path.join(os.path.dirname(__file__), '../assets/static')
-    return send_from_directory(static_dir, filename)
 
 # HTML template with CSS for styling (styles/scripts loaded from assets/static)
 TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Halloween Quiz 🎃</title>
-    <!-- Load external stylesheet kept in assets/static/style.css -->
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <pre>
-     ____                        
-    |    |                     🎃 Halloween
-   /     \\                    Quiz Game
-  |  O  O  |                   
-  |   ^    |                   Get ready
-   \\  --  /                    for some
-    `----`                     spooky fun!
-        </pre>
-        
-        {% if not session.get('game_started') %}
-            <h2>Welcome to the Halloween Quiz! 👻</h2>
-            <form method="POST" action="/start">
-                <input type="text" name="player_name" placeholder="Enter your name" required>
-                <br><br>
-                <select name="difficulty" class="option">
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                </select>
-                <br><br>
-                <div class="categories">
-                    {% for cat_id, cat_name in categories.items() %}
-                    <div>
-                        <input type="checkbox" name="category" value="{{ cat_id }}"
-                               id="cat_{{ cat_id }}" class="category-checkbox" checked>
-                        <label for="cat_{{ cat_id }}" class="category-label">{{ cat_name }}</label>
-                    </div>
-                    {% endfor %}
-                </div>
-                <br>
-                <button class="option" type="submit">Start Game</button>
-            </form>
-        {% elif session.get('game_over') %}
-            <h2>Game Over! 🎃</h2>
-            <div class="score">Final Score: {{ session.get('score', 0) }}</div>
-            <br>
-            <form method="GET" action="/">
-                <button class="option" type="submit">Play Again</button>
-            </form>
-        {% else %}
-            <div class="timer-box">
-                <div class="timer" id="timer" role="status" aria-live="polite" aria-atomic="true">{{ session.get('timer', 30) }}</div>
-                <div class="progress-wrap" aria-hidden="true">
-                    <div class="progress"><i id="timer-progress" style="width:100%"></i></div>
-                </div>
+        <header class="header">
+          <div class="branding">
+            <div class="logo"><img src="/static/logo.svg" alt="Halloween logo" style="width:56px;height:56px;border-radius:12px;display:block"></div>
+            <div>
+              <h1>Halloween Quiz</h1>
+              <p>Sharpen your spooky knowledge — fast, fun, social.</p>
             </div>
-            <div id="timer-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-            <div class="score">Score: {{ session.get('score', 0) }}</div>
-            <div class="question">{{ question }}</div>
-            <form class="options" method="POST" action="/answer">
-                {% for option in options %}
-                    <button class="option card" type="submit" name="answer" value="{{ loop.index0 }}" data-option-index="{{ loop.index0 }}" aria-label="Answer {{ loop.index }}: {{ option }}">
-                        <strong style="margin-right:8px">{{ loop.index }}.</strong> {{ option }}
-                    </button>
-                {% endfor %}
-            </form>
-        {% endif %}
+          </div>
+          <div class="investor-badge">Pitch Ready</div>
+        </header>
+
+        <section class="hero">
+          <div class="left">
+            {% if not session.get('game_started') %}
+                <div class="question-card">
+                  <h2>Welcome to the Halloween Quiz! 👻</h2>
+                  <p style="color:var(--muted);margin-top:8px">Enter your name and choose difficulty to begin.</p>
+                  <form method="POST" action="/start" style="margin-top:14px">
+                      <input type="text" name="player_name" placeholder="Enter your name" required>
+                      <br><br>
+                      <select name="difficulty" class="option">
+                          <option value="easy">Easy</option>
+                          <option value="medium">Medium</option>
+                          <option value="hard">Hard</option>
+                      </select>
+                      <br><br>
+                      <div class="categories">
+                          {% for cat_id, cat_name in categories.items() %}
+                          <div>
+                              <input type="checkbox" name="category" value="{{ cat_id }}"
+                                     id="cat_{{ cat_id }}" class="category-checkbox" checked>
+                              <label for="cat_{{ cat_id }}" class="category-label">{{ cat_name }}</label>
+                          </div>
+                          {% endfor %}
+                      </div>
+                      <br>
+                      <button class="option" type="submit">Start Game</button>
+                  </form>
+                </div>
+            {% elif session.get('game_over') %}
+                <div class="question-card">
+                  <h2>Game Over! 🎃</h2>
+                  <div class="score">Final Score: {{ session.get('score', 0) }}</div>
+                  <br>
+                  <form method="GET" action="/">
+                      <button class="option" type="submit">Play Again</button>
+                  </form>
+                </div>
+            {% else %}
+                <div class="question-card">
+                  <div class="timer-box">
+                      <div class="timer" id="timer" role="status" aria-live="polite" aria-atomic="true">{{ session.get('timer', 30) }}</div>
+                      <div class="progress-wrap" aria-hidden="true">
+                          <div class="progress"><i id="timer-progress" style="width:100%"></i></div>
+                      </div>
+                  </div>
+                  <div id="timer-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+                  <div class="score">Score: {{ session.get('score', 0) }}</div>
+                  <div class="question">{{ question }}</div>
+                  <form class="options" method="POST" action="/answer">
+                      {% for option in options %}
+                          <button class="option card" type="submit" name="answer" value="{{ loop.index0 }}" data-option-index="{{ loop.index0 }}" aria-label="Answer {{ loop.index }}: {{ option }}">
+                              <span class="index">{{ loop.index }}</span>
+                              <span>{{ option }}</span>
+                          </button>
+                      {% endfor %}
+                  </form>
+                </div>
+            {% endif %}
+          </div>
+          <aside class="right">
+            <div class="question-card">
+              <h3 style="margin-top:0">Quick Stats</h3>
+              <ul style="color:var(--muted);line-height:1.6">
+                <li>10 questions per game</li>
+                <li>3 difficulty levels</li>
+                <li>Keyboard-first accessibility</li>
+              </ul>
+              <div style="margin-top:12px"><button class="option">Share</button></div>
+            </div>
+          </aside>
+        </section>
+
     </div>
+
     <!-- Client-side audio elements -->
     {% if start_filename %}
     <audio id="audio-start" src="/sounds/{{ start_filename }}" preload="auto"></audio>
@@ -104,8 +128,8 @@ TEMPLATE = """
     {% if incorrect_filename %}
     <audio id="audio-incorrect" src="/sounds/{{ incorrect_filename }}" preload="auto"></audio>
     {% endif %}
+
     <script>
-        // Play feedback sound if server indicated one
         (function() {
             const feedback = "{{ feedback | default('') }}";
             const playStart = {{ 'true' if play_start else 'false' }};
@@ -113,34 +137,21 @@ TEMPLATE = """
             const playBackground = {{ 'true' if play_background else 'false' }};
             try {
                 if (playStart) {
-                    const a = document.getElementById('audio-start');
-                    if (a) { a.play().catch(()=>{}); }
+                    const a = document.getElementById('audio-start'); if (a) { a.play().catch(()=>{}); }
                 }
                 if (playBackground) {
-                    const b = document.getElementById('audio-background');
-                    if (b) { b.play().catch(()=>{}); }
+                    const b = document.getElementById('audio-background'); if (b) { b.play().catch(()=>{}); }
                 }
-                if (feedback === 'correct') {
-                    document.getElementById('audio-correct').play().catch(()=>{});
-                } else if (feedback === 'incorrect') {
-                    document.getElementById('audio-incorrect').play().catch(()=>{});
-                }
+                if (feedback === 'correct') { const el = document.getElementById('audio-correct'); if(el) el.play().catch(()=>{}); }
+                else if (feedback === 'incorrect') { const el = document.getElementById('audio-incorrect'); if(el) el.play().catch(()=>{}); }
                 if (playCongrats) {
-                    const c = document.getElementById('audio-congrats');
-                    if (c) { c.play().catch(()=>{}); }
+                    const c = document.getElementById('audio-congrats'); if (c) { c.play().catch(()=>{}); }
+                    const b = document.getElementById('audio-background'); if (b) { try { b.pause(); b.currentTime = 0; } catch(e){} }
                 }
-                // If playing congrats, stop background
-                if (playCongrats) {
-                    const b = document.getElementById('audio-background');
-                    if (b) { try { b.pause(); b.currentTime = 0; } catch(e){} }
-                }
-            } catch (e) {
-                // ignore playback errors (e.g., autoplay policy)
-            }
+            } catch (e) { }
         })();
     </script>
 
-    <!-- Inject a small GAME_CONFIG for the frontend script and load ui.js -->
     <script>
         window.GAME_CONFIG = {
             playStart: {{ 'true' if play_start else 'false' }},
@@ -376,6 +387,42 @@ def answer():
                                 question=question['question'],
                                 options=question['options'],
                                 feedback=feedback)
+
+
+# Demo route for screenshots (does not use session)
+@app.route('/demo')
+def demo():
+    # Pick a representative question from assets/questions.json
+    qs = load_questions()
+    # Try common categories
+    sample = None
+    for k in ('spooky','movies','history','candy'):
+        if k in qs and len(qs[k])>0:
+            sample = qs[k][0]
+            break
+    if not sample:
+        # fallback: any question
+        for cat in qs.values():
+            if isinstance(cat, list) and cat:
+                sample = cat[0]; break
+    if not sample:
+        sample = { 'question': 'Demo question?', 'options': ['A','B','C','D'] }
+
+    # Render template with play_congrats true to show confetti for visuals
+    quiz = HalloweenQuizWeb()
+    return render_template_string(TEMPLATE,
+                                  categories=quiz.categories,
+                                  question=sample.get('question','Demo question'),
+                                  options=sample.get('options', ['A','B','C','D']),
+                                  feedback='',
+                                  play_start=False,
+                                  play_background=False,
+                                  play_congrats=True,
+                                  start_filename=None,
+                                  congrats_filename=None,
+                                  background_filename=None,
+                                  correct_filename=None,
+                                  incorrect_filename=None)
 
 if __name__ == '__main__':
     # Ensure the sounds directory exists
