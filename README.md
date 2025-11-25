@@ -2,6 +2,18 @@
 
 An interactive Halloween-themed quiz game with multiple categories and spooky fun!
 
+## Demo
+
+<p align="center">
+  <video controls width="720" poster="assets/screenshots/halloween_demo.png">
+    <source src="assets/screenshots/halloween_demo.mp4" type="video/mp4">
+    <source src="assets/screenshots/halloween_demo.webp" type="image/webp">
+    <img src="assets/screenshots/halloween_demo.gif" alt="Halloween Quiz demo" />
+  </video>
+</p>
+
+*Demo: short gameplay preview (MP4 primary, WebP/GIF fallback).* 
+
 ## Features
 - Multiple quiz categories:
   - Spooky Stories and Urban Legends 👻
@@ -43,10 +55,3 @@ Feel free to contribute new questions by adding them to the `assets/questions.js
 
 ## Run game local
 /home/jafta/Desktop/halloween/venv/bin/python src/game.py
-## Demo
-
-<p align="center">
-  <img src="assets/screenshots/halloween_demo.gif" alt="Halloween Quiz demo" width="720" />
-</p>
-
-*Demo: short gameplay preview.*
