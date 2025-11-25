@@ -53,3 +53,10 @@ Feel free to contribute new questions by adding them to the `assets/questions.js
 
 ## Run game local
 /home/jafta/Desktop/halloween/venv/bin/python src/game.py
+## Demo
+
+<p align="center">
+  <img src="assets/screenshots/halloween_demo.gif" alt="Halloween Quiz demo" width="720" />
+</p>
+
+*Demo: short gameplay preview.*
