@@ -25,20 +25,10 @@ An interactive Halloween-themed quiz game with multiple categories and spooky fu
 git clone https://github.com/jafta1083/halloween.git
 cd halloween
 ```
-
 2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Run the game:
-```bash
 python src/game.py
 ```
 
