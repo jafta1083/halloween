@@ -1,0 +1,14 @@
+[theme]
+base = "dark"
+primaryColor = "#ff6b00"
+textColor = "#FAFAFA"
+
+[server]
+headless = true
+enableXsrfProtection = true
+
+[runner]
+fastReruns = true
+
+[browser]
+gatherUsageStats = false
