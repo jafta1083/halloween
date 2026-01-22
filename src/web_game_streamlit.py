@@ -20,7 +20,7 @@ except Exception:
 def load_questions():
     """Load questions from the JSON file."""
     questions_file = os.path.join(os.path.dirname(__file__), '../assets/questions.json')
-    with open(questions_file, 'r') as f:
+    with open(questions_file, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 class HalloweenQuizStreamlit:
@@ -196,16 +196,6 @@ def display_halloween_header():
     """, unsafe_allow_html=True)
     
     st.markdown('<p class="big-font">🎃 Halloween Quiz 🎃</p>', unsafe_allow_html=True)
-    
-    st.text("""
-     ____                        
-    |    |                     
-   /     \\                    
-  |  O  O  |                   
-  |   ^    |                   
-   \\  --  /                    
-    `----`                     
-    """)
 
 def display_timer():
     """Display and update the countdown timer (non-blocking).
@@ -247,34 +237,6 @@ def main():
     st.set_page_config(page_title="Halloween Quiz 🎃", page_icon="🎃", layout="centered")
     initialize_session_state()
     display_halloween_header()
-    # Show audio players as controls (fallback) so users can manually play
-    # background/start/congrats sounds if client-side playback is desired.
-    sounds_dir = os.path.join(os.path.dirname(__file__), '../assets/sounds')
-    try:
-        def pick(name):
-            for ext in ('.mp3', '.wav'):
-                p = os.path.join(sounds_dir, f"{name}{ext}")
-                if os.path.exists(p):
-                    return p
-            return None
-
-        bg = pick('background')
-        if bg and st.session_state.get('game_started', False):
-            with open(bg, 'rb') as f:
-                st.audio(f.read(), format='audio/wav' if bg.endswith('.wav') else 'audio/mp3')
-        # Also show start/congrats players so users can manually trigger them
-        st_file = pick('start')
-        if st_file and not st.session_state.get('game_started', False):
-            with open(st_file, 'rb') as f:
-                st.audio(f.read(), format='audio/wav' if st_file.endswith('.wav') else 'audio/mp3')
-        cong = pick('congrats')
-        if cong and st.session_state.get('game_over', False):
-            with open(cong, 'rb') as f:
-                st.audio(f.read(), format='audio/wav' if cong.endswith('.wav') else 'audio/mp3')
-    except Exception:
-        # If file read or st.audio fails, silently continue — server-side VLC
-        # playback is the preferred/primary mechanism.
-        pass
     
     if not st.session_state.game_started:
         # Game setup
