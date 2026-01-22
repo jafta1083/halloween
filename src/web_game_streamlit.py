@@ -233,6 +233,34 @@ def main():
     st.set_page_config(page_title="Halloween Quiz 🎃", page_icon="🎃", layout="centered")
     initialize_session_state()
     display_halloween_header()
+    # Client-side web audio fallback: show players so users can play
+    # background/start/congrats sounds on platforms where VLC is unavailable
+    try:
+        sounds_dir = os.path.join(os.path.dirname(__file__), '../assets/sounds')
+        def pick(name: str):
+            for ext in ('.mp3', '.wav'):
+                p = os.path.join(sounds_dir, f"{name}{ext}")
+                if os.path.exists(p):
+                    return p
+            return None
+
+        bg = pick('background')
+        if bg and st.session_state.get('game_started', False):
+            with open(bg, 'rb') as f:
+                st.audio(f.read(), format='audio/wav' if bg.endswith('.wav') else 'audio/mp3')
+
+        st_file = pick('start')
+        if st_file and not st.session_state.get('game_started', False):
+            with open(st_file, 'rb') as f:
+                st.audio(f.read(), format='audio/wav' if st_file.endswith('.wav') else 'audio/mp3')
+
+        cong = pick('congrats')
+        if cong and st.session_state.get('game_over', False):
+            with open(cong, 'rb') as f:
+                st.audio(f.read(), format='audio/wav' if cong.endswith('.wav') else 'audio/mp3')
+    except Exception:
+        # Ignore any issues rendering client-side audio players
+        pass
     
     if not st.session_state.game_started:
         # Game setup
