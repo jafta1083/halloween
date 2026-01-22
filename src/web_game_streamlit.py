@@ -153,6 +153,10 @@ def initialize_session_state():
         st.session_state.questions = []
     if 'timer' not in st.session_state:
         st.session_state.timer = 30
+    if 'time_remaining' not in st.session_state:
+        st.session_state.time_remaining = 30
+    if '_timer_start' not in st.session_state:
+        st.session_state._timer_start = time.time()
     if 'game_over' not in st.session_state:
         st.session_state.game_over = False
     if 'quiz' not in st.session_state:
@@ -198,32 +202,24 @@ def display_halloween_header():
     st.markdown('<p class="big-font">🎃 Halloween Quiz 🎃</p>', unsafe_allow_html=True)
 
 def display_timer():
-    """Display and update the countdown timer (non-blocking).
-
-    This implementation avoids a long blocking while-loop. It tracks the last
-    tick time in session state, decrements the remaining timer by elapsed
-    seconds, updates the UI, and triggers a lightweight rerun to continue the
-    countdown. When the timer reaches zero the function returns True.
-    """
+    """Display the countdown timer."""
     if 'time_remaining' not in st.session_state:
         st.session_state.time_remaining = 30
-        st.session_state._timer_last = time.time()
-
-    now = time.time()
-    elapsed = int(now - st.session_state.get('_timer_last', now))
-    if elapsed >= 1 and st.session_state.time_remaining > 0:
-        st.session_state.time_remaining = max(0, st.session_state.time_remaining - elapsed)
-        st.session_state._timer_last = now
-        # If there's still time left, request a rerun so the UI updates again in ~1s
-        if st.session_state.time_remaining > 0:
-            st.rerun()
-
-    time_placeholder = st.empty()
+    if '_timer_start' not in st.session_state:
+        st.session_state._timer_start = time.time()
+    
+    # Calculate elapsed time from when question was shown
+    elapsed = int(time.time() - st.session_state._timer_start)
+    st.session_state.time_remaining = max(0, 30 - elapsed)
+    
+    # Display timer
+    timer_placeholder = st.empty()
     progress_placeholder = st.empty()
-    time_placeholder.markdown(f'<p class="timer">{st.session_state.time_remaining}</p>', unsafe_allow_html=True)
-    progress = st.session_state.time_remaining / 30 if 30 else 0
+    
+    timer_placeholder.markdown(f'<p class="timer">{st.session_state.time_remaining}</p>', unsafe_allow_html=True)
+    progress = st.session_state.time_remaining / 30
     progress_placeholder.progress(progress)
-
+    
     return st.session_state.time_remaining == 0
 
 def save_high_score():
@@ -261,6 +257,8 @@ def main():
                 st.session_state.difficulty = difficulty
                 st.session_state.questions = st.session_state.quiz.get_questions(
                     selected_categories, difficulty)
+                st.session_state.time_remaining = 30
+                st.session_state._timer_start = time.time()
                 # Play start sound (server-side via VLC if available)
                 try:
                     st.session_state.quiz.play_sound('start')
@@ -315,6 +313,7 @@ def main():
                     # Move to next question
                     st.session_state.current_question += 1
                     st.session_state.time_remaining = 30
+                    st.session_state._timer_start = time.time()
 
                     # Check if game is over
                     if st.session_state.current_question >= len(st.session_state.questions):
@@ -338,6 +337,7 @@ def main():
             st.warning("⏰ Time's up!")
             st.session_state.current_question += 1
             st.session_state.time_remaining = 30
+            st.session_state._timer_start = time.time()
 
             if st.session_state.current_question >= len(st.session_state.questions):
                 st.session_state.game_over = True
