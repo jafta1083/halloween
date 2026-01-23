@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff6b00">
+  <meta name="description" content="A spooky Halloween trivia quiz game you can play on your phone!">
+  <link rel="manifest" href="/pwa/manifest.json">
+  <link rel="icon" type="image/png" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/pwa/styles.css">
+  <title>Halloween Quiz 🎃</title>
+</head>
+<body>
+  <div class="container">
+    <header>🎃</header>
+
+    <!-- Setup Screen -->
+    <div id="setup" class="setup">
+      <h1>Halloween Quiz 🎃</h1>
+      <p style="text-align: center; color: #ccc; margin-bottom: 1.5rem;">Test your spooky knowledge!</p>
+
+      <input 
+        type="text" 
+        id="playerName" 
+        placeholder="Enter your name, brave soul:" 
+        autofocus
+      >
+
+      <label for="difficulty" style="display: block; margin-bottom: 0.5rem;">Choose difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <h2>Select Categories:</h2>
+      <div class="category-group" id="categories"></div>
+
+      <div class="settings-group">
+        <label>
+          <input type="checkbox" id="musicToggle" checked>
+          🎵 Enable background music
+        </label>
+      </div>
+
+      <button onclick="startGame()" style="width: 100%; padding: 1rem; font-size: 1.1rem; background: #ff6b00; color: #000; font-weight: bold; border: none;">
+        Start Game
+      </button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game" class="game">
+      <div class="score" id="score">Score: 0</div>
+      
+      <div class="timer" id="timer">30</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="question" id="question"></div>
+
+      <div id="message" style="min-height: 3rem;"></div>
+
+      <div class="options" id="options"></div>
+
+      <!-- Game Over -->
+      <div id="gameOver" style="display: none; text-align: center;">
+        <div class="final-score" id="finalScore"></div>
+        <button id="playAgainBtn" style="width: 100%; padding: 1rem; font-size: 1.1rem; background: #ff6b00; color: #000; font-weight: bold; border: none;">
+          Play Again
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/pwa/app.js"></script>
+</body>
+</html>

@@ -241,13 +241,15 @@ def _pick_sound_file(name: str):
     return None
 
 def render_background_audio_if_needed():
-    """Render a hidden, looping HTML audio tag after game starts.
+    """Render a hidden, looping HTML audio tag after game starts if music is enabled.
 
     Uses base64 data URI so it works on Streamlit Cloud. Autoplay may be
     blocked until the user clicks Start, but after interaction most browsers
     allow it. The element is hidden to avoid front-page UI glitch.
     """
     if not (st.session_state.get('game_started') and not st.session_state.get('game_over')):
+        return
+    if not st.session_state.get('music_enabled', True):
         return
     try:
         bg = _pick_sound_file('background')
@@ -301,12 +303,16 @@ def main():
             for cat_id, cat_name in st.session_state.quiz.categories.items():
                 if st.checkbox(cat_name, value=True, key=cat_id):
                     selected_categories.append(cat_id)
+            
+            st.write("### Settings:")
+            enable_music = st.checkbox("🎵 Enable background music", value=True)
 
             # Start button should be shown once (outside the category loop)
             if st.button("Start Game") and player_name and selected_categories:
                 st.session_state.game_started = True
                 st.session_state.player_name = player_name
                 st.session_state.difficulty = difficulty
+                st.session_state.music_enabled = enable_music
                 st.session_state.questions = st.session_state.quiz.get_questions(
                     selected_categories, difficulty)
                 st.session_state.time_remaining = 30
