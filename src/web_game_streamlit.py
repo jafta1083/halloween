@@ -25,28 +25,16 @@ except Exception:
 def inject_google_analytics():
     """Inject Google Analytics tracking code into the page."""
     if GA_MEASUREMENT_ID.startswith('G-'):
-        ga_script = f"""
-        <script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){{dataLayer.push(arguments);}}
-            gtag('js', new Date());
-            gtag('config', '{GA_MEASUREMENT_ID}');
-            
-            // Custom events for game analytics
-            window.trackGameStart = function(category) {{
-                gtag('event', 'game_start', {{'category': category}});
-            }};
-            
-            window.trackAnswer = function(isCorrect, category) {{
-                gtag('event', 'answer_submitted', {{'correct': isCorrect, 'category': category}});
-            }};
-            
-            window.trackGameEnd = function(score, total) {{
-                gtag('event', 'game_completed', {{'score': score, 'total': total}});
-            }};
-        </script>
-        """
+        ga_script = f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){{dataLayer.push(arguments)}}
+gtag('js', new Date());
+gtag('config', '{GA_MEASUREMENT_ID}');
+window.trackGameStart = function(category) {{ gtag('event', 'game_start', {{'category': category}}); }};
+window.trackAnswer = function(isCorrect, category) {{ gtag('event', 'answer_submitted', {{'correct': isCorrect, 'category': category}}); }};
+window.trackGameEnd = function(score, total) {{ gtag('event', 'game_completed', {{'score': score, 'total': total}}); }};
+</script>"""
         components.html(ga_script, height=0)
 
 def load_questions():
