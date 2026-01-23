@@ -1,9 +1,11 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import json
 import os
 import random
 from datetime import datetime
 import time
+import base64
 from types import ModuleType
 from typing import Optional
 
@@ -229,6 +231,54 @@ def save_high_score():
         f.write(f"{st.session_state.player_name},{st.session_state.score},"
                 f"{datetime.now()},{st.session_state.difficulty}\n")
 
+def _pick_sound_file(name: str):
+    """Return path to sound file by name, preferring mp3 then wav."""
+    sounds_dir = os.path.join(os.path.dirname(__file__), '../assets/sounds')
+    for ext in ('.mp3', '.wav'):
+        p = os.path.join(sounds_dir, f"{name}{ext}")
+        if os.path.exists(p):
+            return p
+    return None
+
+def render_background_audio_if_needed():
+    """Render a hidden, looping HTML audio tag after game starts.
+
+    Uses base64 data URI so it works on Streamlit Cloud. Autoplay may be
+    blocked until the user clicks Start, but after interaction most browsers
+    allow it. The element is hidden to avoid front-page UI glitch.
+    """
+    if not (st.session_state.get('game_started') and not st.session_state.get('game_over')):
+        return
+    try:
+        bg = _pick_sound_file('background')
+        if not bg:
+            return
+        with open(bg, 'rb') as f:
+            data = f.read()
+        mime = 'audio/mpeg' if bg.endswith('.mp3') else 'audio/wav'
+        b64 = base64.b64encode(data).decode('ascii')
+        components.html(
+            f"""
+            <audio id=\"bgm\" autoplay loop style=\"display:none\">\n
+              <source src=\"data:{mime};base64,{b64}\" type=\"{mime}\">\n
+            </audio>\n
+            <script>\n
+              setTimeout(() => {\n
+                const a = document.getElementById('bgm');\n
+                if (a) { a.muted = false; a.volume = 0.6; a.play().catch(() => {}); }\n
+              }, 300);\n
+            </script>
+            """,
+            height=0,
+        )
+    except Exception:
+        pass
+
+def render_autorefresh_if_playing():
+    """Trigger a lightweight client-side refresh every 1s during gameplay."""
+    if st.session_state.get('game_started') and not st.session_state.get('game_over'):
+        components.html("<script>setTimeout(()=>{window.parent.location.reload();},1000);</script>", height=0)
+
 def main():
     st.set_page_config(page_title="Halloween Quiz 🎃", page_icon="🎃", layout="centered")
     initialize_session_state()
@@ -284,6 +334,9 @@ def main():
         # Display score
         st.markdown(f'<p class="score-font">Score: {st.session_state.score}</p>', 
                    unsafe_allow_html=True)
+        # Smooth timer updates & background music only during gameplay
+        render_autorefresh_if_playing()
+        render_background_audio_if_needed()
         
         # Get current question
         current_q = st.session_state.questions[st.session_state.current_question]
