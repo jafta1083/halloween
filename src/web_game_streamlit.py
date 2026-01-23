@@ -9,6 +9,9 @@ import base64
 from types import ModuleType
 from typing import Optional
 
+# Google Analytics configuration
+GA_MEASUREMENT_ID = os.getenv('GA_MEASUREMENT_ID', 'G-PLACEHOLDER')  # Set via environment variable
+
 # Try to import python-vlc. If import fails we keep `vlc` as None and set a
 # flag so code that depends on it can be skipped. We avoid giving the type
 # checker an ambiguous variable by annotating `vlc`.
@@ -18,6 +21,33 @@ try:
 except Exception:
     vlc: Optional[ModuleType] = None  # type: ignore
     HAS_VLC = False
+
+def inject_google_analytics():
+    """Inject Google Analytics tracking code into the page."""
+    if GA_MEASUREMENT_ID.startswith('G-'):
+        ga_script = f"""
+        <script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){{dataLayer.push(arguments);}}
+            gtag('js', new Date());
+            gtag('config', '{GA_MEASUREMENT_ID}');
+            
+            // Custom events for game analytics
+            window.trackGameStart = function(category) {{
+                gtag('event', 'game_start', {{'category': category}});
+            }};
+            
+            window.trackAnswer = function(isCorrect, category) {{
+                gtag('event', 'answer_submitted', {{'correct': isCorrect, 'category': category}});
+            }};
+            
+            window.trackGameEnd = function(score, total) {{
+                gtag('event', 'game_completed', {{'score': score, 'total': total}});
+            }};
+        </script>
+        """
+        components.html(ga_script, height=0)
 
 def load_questions():
     """Load questions from the JSON file."""
@@ -284,6 +314,10 @@ def render_autorefresh_if_playing():
 def main():
     st.set_page_config(page_title="Halloween Quiz 🎃", page_icon="🎃", layout="centered")
     initialize_session_state()
+    
+    # Inject Google Analytics
+    inject_google_analytics()
+    
     display_halloween_header()
     # Background music UI hidden per user request. Server-side VLC playback
     # remains available when supported; otherwise no front-page audio controls.

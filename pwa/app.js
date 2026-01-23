@@ -1,3 +1,36 @@
+// Google Analytics helper
+const GA_ID = 'G-PLACEHOLDER'; // Set via environment variable or build config
+function initGoogleAnalytics() {
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+  document.head.appendChild(script);
+  
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', GA_ID);
+}
+
+function trackGameStart(category) {
+  if (typeof window.gtag !== 'undefined') {
+    window.gtag('event', 'game_start', { 'category': category });
+  }
+}
+
+function trackAnswer(isCorrect, category) {
+  if (typeof window.gtag !== 'undefined') {
+    window.gtag('event', 'answer_submitted', { 'correct': isCorrect, 'category': category });
+  }
+}
+
+function trackGameEnd(score, total) {
+  if (typeof window.gtag !== 'undefined') {
+    window.gtag('event', 'game_completed', { 'score': score, 'total': total });
+  }
+}
+
 // Quiz game state
 let gameState = {
   quiz: null,
@@ -90,6 +123,9 @@ function startGame() {
   gameState.selectedCategories = Array.from(checkboxes).map((cb) => cb.value);
   gameState.musicEnabled = document.getElementById('musicToggle').checked;
   
+  // Track game start in analytics
+  trackGameStart(gameState.selectedCategories.join(','));
+  
   const questions = getQuestionsForGame(difficulty);
   if (questions.length === 0) {
     alert('No questions found for selected categories and difficulty.');
@@ -115,14 +151,18 @@ function selectAnswer(optionIndex) {
   const currentQ = questions[gameState.currentQuestion];
   const correctIndex = currentQ.options.indexOf(currentQ.correct_answer);
   
+  const isCorrect = optionIndex === correctIndex;
   const message = document.getElementById('message');
-  if (optionIndex === correctIndex) {
+  
+  if (isCorrect) {
     gameState.score += { easy: 1, medium: 2, hard: 3 }[gameState.difficulty] || 1;
     message.textContent = '✨ Correct!';
     message.className = 'message success';
+    trackAnswer(true, currentQ.category || 'unknown');
   } else {
     message.textContent = `👻 Wrong! Correct answer: ${currentQ.correct_answer}`;
     message.className = 'message error';
+    trackAnswer(false, currentQ.category || 'unknown');
   }
   
   setTimeout(() => {
@@ -130,6 +170,8 @@ function selectAnswer(optionIndex) {
     if (gameState.currentQuestion >= questions.length) {
       gameState.gameOver = true;
       stopBackgroundMusic();
+      // Track game completion
+      trackGameEnd(gameState.score, questions.length);
     } else {
       gameState.timeRemaining = 30;
       startTimer();

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate PWA Icons</title>
+</head>
+<body>
+  <h1>PWA Icon Generator</h1>
+  <p>Download the images below and place them in the pwa folder:</p>
+  
+  <canvas id="canvas192"></canvas><br>
+  <button onclick="download192()">Download icon-192.png</button><br><br>
+  
+  <canvas id="canvas512"></canvas><br>
+  <button onclick="download512()">Download icon-512.png</button>
+  
+  <script>
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = size;
+      canvas.height = size;
+      
+      // Dark background
+      ctx.fillStyle = '#0e1117';
+      ctx.fillRect(0, 0, size, size);
+      
+      // Orange circle
+      ctx.fillStyle = '#ff6b00';
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Pumpkin emoji style
+      ctx.fillStyle = '#0e1117';
+      const centerX = size / 2;
+      const centerY = size / 2;
+      
+      // Eyes
+      ctx.fillRect(centerX - size * 0.15, centerY - size * 0.1, size * 0.08, size * 0.08);
+      ctx.fillRect(centerX + size * 0.07, centerY - size * 0.1, size * 0.08, size * 0.08);
+      
+      // Mouth (triangle)
+      ctx.beginPath();
+      ctx.moveTo(centerX - size * 0.1, centerY + size * 0.05);
+      ctx.lineTo(centerX + size * 0.1, centerY + size * 0.05);
+      ctx.lineTo(centerX, centerY + size * 0.15);
+      ctx.fill();
+      
+      // Stem
+      ctx.fillStyle = '#228B22';
+      ctx.fillRect(centerX - size * 0.02, centerY - size * 0.5, size * 0.04, size * 0.1);
+    }
+    
+    function download(size) {
+      const canvas = size === 192 ? document.getElementById('canvas192') : document.getElementById('canvas512');
+      drawIcon(canvas, size);
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `icon-${size}.png`;
+        a.click();
+      });
+    }
+    
+    function download192() { download(192); }
+    function download512() { download(512); }
+    
+    // Auto-draw on load
+    window.addEventListener('load', () => {
+      drawIcon(document.getElementById('canvas192'), 192);
+      drawIcon(document.getElementById('canvas512'), 512);
+    });
+  </script>
+</body>
+</html>

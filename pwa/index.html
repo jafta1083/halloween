@@ -75,5 +75,14 @@
   </div>
 
   <script src="/pwa/app.js"></script>
+  <script>
+    // Initialize Google Analytics and Service Worker on page load
+    window.addEventListener('load', () => {
+      initGoogleAnalytics();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/pwa/sw.js').catch(err => console.log('SW registration failed:', err));
+      }
+    });
+  </script>
 </body>
 </html>
