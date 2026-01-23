@@ -1,7 +1,7 @@
 [theme]
 base = "dark"
-primaryColor = "#ff6b00"
-textColor = "#FAFAFA"
+primaryColor = "ff6b00"
+textColor = "fafafa"
 
 [server]
 headless = true
